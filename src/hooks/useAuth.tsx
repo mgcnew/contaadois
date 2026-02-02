@@ -62,7 +62,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 .from('avatars')
                 .getPublicUrl(filePath);
 
-            return { publicUrl, error: null };
+            // Adicionar timestamp para evitar cache do navegador
+            const publicUrlWithCacheBuster = `${publicUrl}?t=${new Date().getTime()}`;
+
+            return { publicUrl: publicUrlWithCacheBuster, error: null };
         } catch (error) {
             console.error('Error uploading avatar:', error);
             return { publicUrl: null, error };
