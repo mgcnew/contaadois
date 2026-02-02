@@ -41,14 +41,15 @@ export function TransactionsList() {
         
         // Date filter
         if (dateFilter !== 'all') {
-            const transactionDate = new Date(t.date);
+            // Criar data da transação sem fuso horário para comparação correta
+            const [y, m, d] = t.date.split('T')[0].split('-').map(Number);
+            const transactionDate = new Date(y, m - 1, d);
+            
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             
             if (dateFilter === 'today') {
-                const txDate = new Date(transactionDate);
-                txDate.setHours(0, 0, 0, 0);
-                if (txDate.getTime() !== today.getTime()) return false;
+                if (transactionDate.getTime() !== today.getTime()) return false;
             } else if (dateFilter === 'week') {
                 const weekAgo = new Date(today);
                 weekAgo.setDate(weekAgo.getDate() - 7);

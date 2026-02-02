@@ -1,7 +1,7 @@
 import { ShoppingCart, DollarSign, Utensils, Home, Zap, Briefcase } from 'lucide-react';
 import type { Transaction } from '../../lib/database.types';
 import clsx from 'clsx';
-import { formatCurrency } from '../../lib/formatters';
+import { formatCurrency, formatDateBR } from '../../lib/formatters';
 
 interface TransactionItemProps {
     transaction: Transaction;
@@ -35,7 +35,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
                 <div>
                     <p className="font-medium text-slate-900 dark:text-slate-100">{transaction.title}</p>
                     <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span>{transaction.date}</span>
+                        <span>{formatDateBR(transaction.date)}</span>
                         <span className="w-1 h-1 rounded-full bg-slate-400"></span>
                         {transaction.isShared && (
                             <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-medium">Compartilhado</span>

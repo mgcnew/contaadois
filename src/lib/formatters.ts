@@ -50,3 +50,30 @@ export const sanitizeCurrencyInput = (value: string): string => {
     }
     return clean;
 };
+
+/**
+ * Formata uma data ISO (YYYY-MM-DD) para o padrão brasileiro (DD/MM/YYYY)
+ * Evita problemas de fuso horário tratando a string de data diretamente.
+ */
+export const formatDateBR = (dateStr: string): string => {
+    if (!dateStr) return '';
+    
+    // Se a data já vier com o formato de data do Supabase (YYYY-MM-DD)
+    const [year, month, day] = dateStr.split('T')[0].split('-');
+    
+    if (year && month && day) {
+        return `${day}/${month}/${year}`;
+    }
+    
+    // Fallback caso receba um objeto Date ou formato inesperado
+    try {
+        const date = new Date(dateStr);
+        // Usar getUTC para evitar que o fuso horário mude o dia (problema do "dia 05 virar 04")
+        const d = String(date.getUTCDate()).padStart(2, '0');
+        const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const y = date.getUTCFullYear();
+        return `${d}/${m}/${y}`;
+    } catch (e) {
+        return dateStr;
+    }
+};
