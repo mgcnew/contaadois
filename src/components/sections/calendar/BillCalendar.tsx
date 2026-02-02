@@ -1,18 +1,21 @@
-import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Clock, ReceiptText, Plus, Repeat } from 'lucide-react';
+import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Clock, ReceiptText, Plus, Repeat, TrendingUp, ShoppingBag } from 'lucide-react';
 import clsx from 'clsx';
 import { useBills } from '../../../hooks/useBills';
 import { useTransactions } from '../../../hooks/useTransactions';
-import { useState } from 'react';
+import { useShoppingItems } from '../../../hooks/useShoppingItems';
+import { useState, useMemo } from 'react';
 import { BillModal } from '../../ui/BillModal';
+import { formatCurrency } from '../../../lib/formatters';
 
 export function BillCalendar() {
     const { bills, loading: loadingBills, updateBill } = useBills();
     const { transactions, loading: loadingTransactions } = useTransactions();
+    const { items: shoppingItems, loading: loadingShopping } = useShoppingItems();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [hoveredDay, setHoveredDay] = useState<number | null>(null);
     const [isBillModalOpen, setIsBillModalOpen] = useState(false);
 
-    const loading = loadingBills || loadingTransactions;
+    const loading = loadingBills || loadingTransactions || loadingShopping;
 
     const handleTogglePaid = async (id: string, currentStatus: string) => {
         const newStatus = currentStatus === 'paid' ? 'pending' : 'paid';
@@ -45,11 +48,16 @@ export function BillCalendar() {
         return billDate.getMonth() === month && billDate.getFullYear() === year;
     });
 
-    // Filter transactions (expenses only) for current month
-    const monthExpenses = transactions.filter(t => {
-        if (t.type !== 'expense') return false;
+    // Filter transactions (income and expenses) for current month
+    const monthTransactions = transactions.filter(t => {
         const tDate = new Date(t.date);
         return tDate.getMonth() === month && tDate.getFullYear() === year;
+    });
+
+    // Filter shopping items for current month
+    const monthShopping = shoppingItems.filter(item => {
+        const itemDate = new Date(item.created_at);
+        return itemDate.getMonth() === month && itemDate.getFullYear() === year;
     });
 
     const previousMonth = () => {
@@ -65,7 +73,9 @@ export function BillCalendar() {
             case 'paid': return 'bg-emerald-500 text-emerald-50';
             case 'overdue': return 'bg-rose-500 text-rose-50';
             case 'pending': return 'bg-amber-400 text-amber-50';
-            case 'expense': return 'bg-violet-500 text-violet-50';
+            case 'expense': return 'bg-rose-500 text-rose-50';
+            case 'income': return 'bg-emerald-500 text-emerald-50';
+            case 'shopping': return 'bg-blue-500 text-blue-50';
             default: return 'bg-slate-200 dark:bg-slate-700';
         }
     };
@@ -100,19 +110,19 @@ export function BillCalendar() {
             <div className="flex gap-4 text-xs overflow-x-auto pb-2 no-scrollbar">
                 <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
-                    <span className="text-slate-500">Contas Pagas</span>
+                    <span className="text-slate-500">Ganhos / Pagos</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="w-3 h-3 rounded-full bg-amber-400"></span>
-                    <span className="text-slate-500">Contas a Vencer</span>
+                    <span className="text-slate-500">A Vencer</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="w-3 h-3 rounded-full bg-rose-500"></span>
-                    <span className="text-slate-500">Contas Atrasadas</span>
+                    <span className="text-slate-500">Gastos / Atrasadas</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="w-3 h-3 rounded-full bg-violet-500"></span>
-                    <span className="text-slate-500">Gastos do Dia</span>
+                    <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                    <span className="text-slate-500">Total Compras</span>
                 </div>
             </div>
 
@@ -129,9 +139,13 @@ export function BillCalendar() {
 
                     {days.map(day => {
                         const dayBills = monthBills.filter(b => new Date(b.due_date).getDate() === day);
-                        const dayExpenses = monthExpenses.filter(t => new Date(t.date).getDate() === day);
+                        const dayTransactions = monthTransactions.filter(t => new Date(t.date).getDate() === day);
+                        const dayShopping = monthShopping.filter(i => new Date(i.created_at).getDate() === day);
+                        
+                        const shoppingTotal = dayShopping.reduce((acc, curr) => acc + (Number(curr.estimated_price || 0) * curr.quantity), 0);
+                        
                         const isToday = isCurrentMonth && day === today;
-                        const hasContent = dayBills.length > 0 || dayExpenses.length > 0;
+                        const hasContent = dayBills.length > 0 || dayTransactions.length > 0 || dayShopping.length > 0;
                         const isHovered = hoveredDay === day;
 
                         return (
@@ -151,19 +165,22 @@ export function BillCalendar() {
                                     isToday ? "font-bold text-violet-600 dark:text-violet-400" : "text-slate-700 dark:text-slate-400"
                                 )}>{day}</span>
 
-                                <div className="absolute bottom-1 left-1 right-1 flex justify-center gap-0.5">
+                                <div className="absolute bottom-1 left-1 right-1 flex justify-center gap-0.5 flex-wrap">
                                     {dayBills.map(bill => (
                                         <div key={bill.id} className={clsx("w-1.5 h-1.5 rounded-full", getStatusColor(bill.status))}></div>
                                     ))}
-                                    {dayExpenses.length > 0 && (
-                                        <div className={clsx("w-1.5 h-1.5 rounded-full", getStatusColor('expense'))}></div>
+                                    {dayTransactions.map(t => (
+                                        <div key={t.id} className={clsx("w-1.5 h-1.5 rounded-full", getStatusColor(t.type))}></div>
+                                    ))}
+                                    {dayShopping.length > 0 && (
+                                        <div className={clsx("w-1.5 h-1.5 rounded-full", getStatusColor('shopping'))}></div>
                                     )}
                                 </div>
 
                                 {/* Tooltip */}
                                 {isHovered && hasContent && (
                                     <div className={clsx(
-                                        "absolute bottom-full mb-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-3 z-30 animate-in fade-in zoom-in duration-200",
+                                        "absolute bottom-full mb-2 w-52 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-3 z-30 animate-in fade-in zoom-in duration-200",
                                         "md:pointer-events-none", // Allow clicks on mobile, prevent flicker on desktop
                                         // Responsividade do Tooltip: Ajusta a posição horizontal para não cortar
                                         (day % 7 === 1 || day % 7 === 2) ? "left-0 translate-x-0" : // Começo da semana: alinha à esquerda
@@ -171,27 +188,47 @@ export function BillCalendar() {
                                         "left-1/2 -translate-x-1/2" // Meio da semana: centralizado
                                     )}>
                                         <div className="space-y-2">
-                                            {dayBills.map(bill => (
-                                                <div key={bill.id} className="flex items-center justify-between gap-2">
-                                                    <div className="flex items-center gap-1.5 min-w-0">
-                                                        <div className={clsx("w-1.5 h-1.5 rounded-full flex-shrink-0", getStatusColor(bill.status))}></div>
-                                                        <span className="text-[10px] font-medium text-slate-700 dark:text-slate-200 truncate">{bill.title}</span>
-                                                    </div>
-                                                    <span className="text-[10px] font-bold text-slate-900 dark:text-slate-100" data-value>R$ {Number(bill.amount).toFixed(0)}</span>
-                                                </div>
-                                            ))}
-                                            {dayExpenses.length > 0 && (
-                                                <div className="pt-1 border-t border-slate-100 dark:border-slate-700">
-                                                    <p className="text-[9px] uppercase font-bold text-violet-500 mb-1">Gastos do dia</p>
-                                                    {dayExpenses.map(t => (
-                                                        <div key={t.id} className="flex items-center justify-between gap-2">
+                                            {dayBills.length > 0 && (
+                                                <div className="space-y-1">
+                                                    <p className="text-[9px] uppercase font-bold text-slate-400 mb-1">Contas</p>
+                                                    {dayBills.map(bill => (
+                                                        <div key={bill.id} className="flex items-center justify-between gap-2">
                                                             <div className="flex items-center gap-1.5 min-w-0">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-violet-500 flex-shrink-0"></div>
-                                                                <span className="text-[10px] font-medium text-slate-700 dark:text-slate-200 truncate">{t.title}</span>
+                                                                <div className={clsx("w-1.5 h-1.5 rounded-full flex-shrink-0", getStatusColor(bill.status))}></div>
+                                                                <span className="text-[10px] font-medium text-slate-700 dark:text-slate-200 truncate">{bill.title}</span>
                                                             </div>
-                                                            <span className="text-[10px] font-bold text-rose-500" data-value>R$ {Number(t.amount).toFixed(0)}</span>
+                                                            <span className="text-[10px] font-bold text-slate-900 dark:text-slate-100" data-value>{formatCurrency(bill.amount)}</span>
                                                         </div>
                                                     ))}
+                                                </div>
+                                            )}
+
+                                            {dayTransactions.length > 0 && (
+                                                <div className="pt-1 border-t border-slate-100 dark:border-slate-700 space-y-1">
+                                                    <p className="text-[9px] uppercase font-bold text-slate-400 mb-1">Movimentações</p>
+                                                    {dayTransactions.map(t => (
+                                                        <div key={t.id} className="flex items-center justify-between gap-2">
+                                                            <div className="flex items-center gap-1.5 min-w-0">
+                                                                <div className={clsx("w-1.5 h-1.5 rounded-full flex-shrink-0", getStatusColor(t.type))}></div>
+                                                                <span className="text-[10px] font-medium text-slate-700 dark:text-slate-200 truncate">{t.title}</span>
+                                                            </div>
+                                                            <span className={clsx(
+                                                                "text-[10px] font-bold",
+                                                                t.type === 'income' ? "text-emerald-500" : "text-rose-500"
+                                                            )} data-value>
+                                                                {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {dayShopping.length > 0 && (
+                                                <div className="pt-1 border-t border-slate-100 dark:border-slate-700">
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-[9px] uppercase font-bold text-blue-500">Lista de Compras</p>
+                                                        <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">{formatCurrency(shoppingTotal)}</span>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
