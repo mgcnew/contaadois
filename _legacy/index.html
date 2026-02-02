@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanças a Dois - Gestão Financeira para Casais</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- Lucide Icons -->
+    
+
+    <style type="text/tailwindcss">
+        @theme {
+            --font-sans: 'Inter', sans-serif;
+            --color-violet-550: #7c3aed; /* Custom tweaks if needed, but standard palette is good */
+        }
+        
+        /* Custom Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: none; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out both;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out both;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.3s ease-out both;
+        }
+
+        /* Donut Chart CSS */
+        .donut-chart {
+            background: conic-gradient(
+                var(--color-emerald-500) 0% 65%, 
+                var(--color-rose-500) 65% 100%
+            );
+            border-radius: 50%;
+        }
+
+        /* Hide scrollbar for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Glassmorphism utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-panel {
+            @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 font-sans transition-colors duration-300 min-h-screen overflow-hidden selection:bg-violet-500/30">
+
+    <!-- LOGIN SCREEN -->
+    <section id="login-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 transition-opacity duration-500 hidden" style="opacity: 1; transform: none; translate: none; rotate: none; scale: none;">
+        <div class="text-center mb-12 animate-fade-in-up">
+            <div class="bg-violet-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-violet-500/20">
+                <i data-lucide="wallet-2" class="w-8 h-8 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight mb-2">Finanças a Dois</h1>
+            <p class="text-slate-500 dark:text-slate-400">Gerencie o futuro financeiro juntos.</p>
+        </div>
+
+        <div class="w-full max-w-md space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <p class="text-center text-sm font-medium text-slate-400 uppercase tracking-wider mb-4">Quem está entrando?</p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="login('Ana')" class="group relative flex flex-col items-center p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-violet-500 dark:hover:border-violet-500 hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-400 p-1 mb-4 group-hover:scale-110 transition-transform">
+                        <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Ana" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-slate-900">
+                    </div>
+                    <span class="font-semibold text-lg">Ana</span>
+                    <span class="text-xs text-slate-500 mt-1">Gestora</span>
+                </button>
+
+                <button onclick="login('Pedro')" class="group relative flex flex-col items-center p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 p-1 mb-4 group-hover:scale-110 transition-transform">
+                        <img src="https://i.pravatar.cc/150?u=a04258a2462d826712d" alt="Pedro" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-slate-900">
+                    </div>
+                    <span class="font-semibold text-lg">Pedro</span>
+                    <span class="text-xs text-slate-500 mt-1">Investidor</span>
+                </button>
+            </div>
+
+            <!-- Management & System Options -->
+            <button onclick="login('Admin')" class="w-full group relative flex items-center justify-center gap-3 p-4 rounded-xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300">
+                <div class="p-2 bg-slate-200 dark:bg-slate-800 rounded-lg group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
+                    <i data-lucide="settings-2" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
+                </div>
+                <span class="font-medium text-slate-700 dark:text-slate-300">Painel Administrativo</span>
+            </button>
+
+            <div class="flex items-center justify-between pt-6 border-t border-slate-200 dark:border-slate-800 text-sm">
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    Criar nova conta
+                </a>
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    Termos de Uso
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container" class="flex h-screen overflow-hidden">
+        
+        <!-- SIDEBAR (Desktop) -->
+        <aside class="hidden md:flex flex-col w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-full">
+            <div class="p-6 flex items-center gap-3">
+                <div class="bg-violet-600 p-2 rounded-lg">
+                    <i data-lucide="wallet-2" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="font-bold text-xl tracking-tight">Finanças</span>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-2 mt-4">
+                <button onclick="switchTab('dashboard')" id="nav-dash-d" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid w-5 h-5" aria-hidden="true" data-lucide="layout-grid"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+                    Visão Geral
+                </button>
+                <button onclick="switchTab('transactions')" id="nav-trans-d" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-filter w-5 h-5" aria-hidden="true" data-lucide="list-filter"><path d="M2 5h20"></path><path d="M6 12h12"></path><path d="M9 19h6"></path></svg>
+                    Extrato
+                </button>
+                <button class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-pie w-5 h-5" aria-hidden="true" data-lucide="pie-chart"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"></path><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path></svg>
+                    Relatórios
+                </button>
+                <button class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-target w-5 h-5" aria-hidden="true" data-lucide="target"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                    Metas
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                    <img id="user-avatar-desktop" src="https://i.pravatar.cc/150?u=a04258a2462d826712d" alt="User" class="w-10 h-10 rounded-full bg-slate-200 object-cover">
+                    <div class="flex-1 min-w-0">
+                        <p id="user-name-desktop" class="text-sm font-medium truncate">Pedro</p>
+                        <p class="text-xs text-slate-500 truncate">Conta Conjunta</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hover:text-red-500 cursor-pointer w-4 h-4" aria-hidden="true" data-lucide="log-out"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+            
+            <!-- Header (Mobile Only) -->
+            <header class="md:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
+                <div class="flex items-center gap-3">
+                    <img id="user-avatar-mobile" src="https://i.pravatar.cc/150?u=a04258a2462d826712d" alt="User" class="w-8 h-8 rounded-full bg-slate-200 object-cover">
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Olá,</p>
+                        <p id="user-name-mobile" class="text-sm font-bold leading-none text-slate-900 dark:text-slate-100">Pedro</p>
+                    </div>
+                </div>
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block w-5 h-5" aria-hidden="true" data-lucide="moon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:hidden w-5 h-5" aria-hidden="true" data-lucide="sun"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+                </button>
+            </header>
+
+            <!-- Header (Desktop) -->
+            <header class="hidden md:flex items-center justify-between px-8 py-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Dashboard</h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Visão geral das finanças do casal</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-5 h-5" aria-hidden="true" data-lucide="bell"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full"></span>
+                    </button>
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block w-5 h-5" aria-hidden="true" data-lucide="moon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:hidden w-5 h-5" aria-hidden="true" data-lucide="sun"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+                    </button>
+                    <button onclick="openModal()" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus w-4 h-4" aria-hidden="true" data-lucide="plus"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                        Nova Transação
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT SCROLL AREA -->
+            <div id="content-scroll" class="flex-1 overflow-y-auto pb-24 md:pb-8 px-4 md:px-8 no-scrollbar">
+                
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="space-y-6 animate-fade-in">
+                    
+                    <!-- Main Balance Card (Minimalist) -->
+                    <div class="w-full p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm relative overflow-hidden">
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-8">
+                                <div>
+                                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Saldo Total do Casal</p>
+                                    <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-100">R$ 12.450,00</h2>
+                                </div>
+                                <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded-lg text-slate-900 dark:text-slate-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-6 h-6" aria-hidden="true" data-lucide="trending-up"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-3 md:p-4">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Receitas (Mês)</p>
+                                    </div>
+                                    <p class="text-lg font-semibold text-slate-900 dark:text-slate-100">+ R$ 8.200,00</p>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-3 md:p-4">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Despesas (Mês)</p>
+                                    </div>
+                                    <p class="text-lg font-semibold text-slate-900 dark:text-slate-100">- R$ 3.150,00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Individual Cards & Chart Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left: Individual Balances -->
+                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Ana's Card -->
+                            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
+                                <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-900 dark:text-slate-100 w-24 h-24" aria-hidden="true" data-lucide="user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700">
+                                    <div>
+                                        <p class="text-sm text-slate-500 font-medium">Saldo Ana</p>
+                                        <p class="text-xs text-emerald-500 flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up w-3 h-3" aria-hidden="true" data-lucide="arrow-up"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg> 12% vs mês ant.</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-slate-100">R$ 7.120,00</p>
+                                </div>
+                            </div>
+
+                            <!-- Pedro's Card -->
+                            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
+                                <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-900 dark:text-slate-100 w-24 h-24" aria-hidden="true" data-lucide="user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <img src="https://i.pravatar.cc/150?u=a04258a2462d826712d" class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700">
+                                    <div>
+                                        <p class="text-sm text-slate-500 font-medium">Saldo Pedro</p>
+                                        <p class="text-xs text-rose-500 flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down w-3 h-3" aria-hidden="true" data-lucide="arrow-down"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg> 2% vs mês ant.</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-slate-100">R$ 5.330,00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Doughnut Chart -->
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center relative">
+                            <h3 class="w-full text-left text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Balanço Mensal</h3>
+                            
+                            <div class="relative w-40 h-40">
+                                <!-- CSS Conic Gradient Chart -->
+                                <div class="w-full h-full rounded-full donut-chart opacity-90"></div>
+                                <!-- Inner Circle for Donut Effect -->
+                                <div class="absolute inset-0 m-auto w-28 h-28 bg-white dark:bg-slate-900 rounded-full flex flex-col items-center justify-center">
+                                    <span class="text-xs text-slate-400">Economia</span>
+                                    <span class="text-xl font-bold text-slate-900 dark:text-slate-100">65%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="w-full mt-6 space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                        <span class="text-slate-600 dark:text-slate-400">Entradas</span>
+                                    </div>
+                                    <span class="font-medium text-slate-900 dark:text-slate-100">R$ 8.200</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                        <span class="text-slate-600 dark:text-slate-400">Saídas</span>
+                                    </div>
+                                    <span class="font-medium text-slate-900 dark:text-slate-100">R$ 3.150</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                            <h3 class="font-bold text-lg text-slate-900 dark:text-slate-100">Últimas Movimentações</h3>
+                            <button onclick="switchTab('transactions')" class="text-sm text-slate-900 hover:text-slate-600 dark:text-slate-100 dark:hover:text-slate-300 font-medium">Ver tudo</button>
+                        </div>
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Transaction Item 1 -->
+                            <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-rose-500 group-hover:scale-105 transition-transform">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart w-5 h-5" aria-hidden="true" data-lucide="shopping-cart"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-slate-900 dark:text-slate-100">Supermercado Semanal</p>
+                                        <div class="flex items-center gap-2 text-xs text-slate-500">
+                                            <span>Hoje, 14:30</span>
+                                            <span class="w-1 h-1 rounded-full bg-slate-400"></span>
+                                            <span class="flex items-center gap-1"><img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" class="w-3 h-3 rounded-full"> Ana</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="font-semibold text-rose-500">- R$ 450,20</span>
+                            </div>
+
+                            <!-- Transaction Item 2 -->
+                            <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-emerald-500 group-hover:scale-105 transition-transform">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign w-5 h-5" aria-hidden="true" data-lucide="dollar-sign"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-slate-900 dark:text-slate-100">Freelance Design</p>
+                                        <div class="flex items-center gap-2 text-xs text-slate-500">
+                                            <span>Ontem, 09:15</span>
+                                            <span class="w-1 h-1 rounded-full bg-slate-400"></span>
+                                            <span class="flex items-center gap-1"><img src="https://i.pravatar.cc/150?u=a04258a2462d826712d" class="w-3 h-3 rounded-full"> Pedro</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="font-semibold text-emerald-500">+ R$ 1.200,00</span>
+                            </div>
+
+                             <!-- Transaction Item 3 -->
+                             <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-rose-500 group-hover:scale-105 transition-transform">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils w-5 h-5" aria-hidden="true" data-lucide="utensils"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-slate-900 dark:text-slate-100">Jantar Outback</p>
+                                        <div class="flex items-center gap-2 text-xs text-slate-500">
+                                            <span>Ontem, 20:00</span>
+                                            <span class="w-1 h-1 rounded-full bg-slate-400"></span>
+                                            <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-medium">Compartilhado</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="font-semibold text-rose-500">- R$ 180,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: TRANSACTIONS (Hidden by default) -->
+                <div id="view-transactions" class="hidden space-y-6 animate-fade-in">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Extrato Completo</h2>
+                        <button class="text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 flex items-center gap-2 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel w-4 h-4" aria-hidden="true" data-lucide="filter"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg> Filtrar
+                        </button>
+                    </div>
+
+                    <!-- Filter Chips (Horizontal Scroll) -->
+                    <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                        <button class="whitespace-nowrap px-4 py-2 rounded-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium">Todos</button>
+                        <button class="whitespace-nowrap px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:border-slate-300 transition-colors">Entradas</button>
+                        <button class="whitespace-nowrap px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:border-slate-300 transition-colors">Saídas</button>
+                        <button class="whitespace-nowrap px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:border-slate-300 transition-colors">Ana</button>
+                        <button class="whitespace-nowrap px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:border-slate-300 transition-colors">Pedro</button>
+                    </div>
+
+                    <!-- Full List Mock -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            Este Mês
+                        </div>
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800">
+                             <!-- Repeater for mock items -->
+                             <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl text-rose-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house w-6 h-6" aria-hidden="true" data-lucide="home"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-slate-900 dark:text-slate-100">Aluguel Apartamento</p>
+                                        <p class="text-xs text-slate-500">05 Set • Fixo</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-slate-900 dark:text-slate-100">- R$ 2.500,00</p>
+                                    <p class="text-xs text-slate-500">Ana &amp; Pedro</p>
+                                </div>
+                            </div>
+
+                             <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl text-rose-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-6 h-6" aria-hidden="true" data-lucide="zap"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-slate-900 dark:text-slate-100">Conta de Luz</p>
+                                        <p class="text-xs text-slate-500">10 Set • Fixo</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-slate-900 dark:text-slate-100">- R$ 240,50</p>
+                                    <p class="text-xs text-slate-500">Pedro</p>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl text-emerald-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase w-6 h-6" aria-hidden="true" data-lucide="briefcase"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-slate-900 dark:text-slate-100">Salário Mensal</p>
+                                        <p class="text-xs text-slate-500">01 Set • Receita</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-emerald-500">+ R$ 4.500,00</p>
+                                    <p class="text-xs text-slate-500">Ana</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Spacer for mobile nav -->
+                <div class="h-20 md:hidden"></div>
+            </div>
+
+            <!-- ADD TRANSACTION MODAL OVERLAY -->
+            <div id="modal-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden transition-opacity opacity-0" onclick="closeModal()"></div>
+            
+            <!-- ADD TRANSACTION MODAL -->
+            <div id="transaction-modal" class="fixed bottom-0 md:top-1/2 md:left-1/2 md:bottom-auto md:-translate-x-1/2 md:-translate-y-1/2 w-full md:w-[480px] bg-white dark:bg-slate-900 md:rounded-2xl rounded-t-2xl shadow-2xl z-50 transform translate-y-full transition-transform duration-300 flex flex-col max-h-[90vh]">
+                
+            </div>
+
+            <!-- MOBILE BOTTOM NAV -->
+            <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 pb-safe z-30">
+                <div class="flex justify-around items-center h-16 px-2 relative">
+                    <button onclick="switchTab('dashboard')" id="nav-dash-m" class="flex flex-col items-center justify-center w-16 h-full text-slate-900 dark:text-slate-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 w-6 h-6" aria-hidden="true" data-lucide="layout-grid"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+                        <span class="text-[10px] font-medium">Início</span>
+                    </button>
+                    
+                    <button onclick="switchTab('transactions')" id="nav-trans-m" class="flex flex-col items-center justify-center w-16 h-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 w-6 h-6" aria-hidden="true" data-lucide="list-filter"><path d="M2 5h20"></path><path d="M6 12h12"></path><path d="M9 19h6"></path></svg>
+                        <span class="text-[10px] font-medium">Extrato</span>
+                    </button>
+
+                    <!-- FAB in Center -->
+                    <div class="relative -top-6">
+                        <button onclick="openModal()" class="w-14 h-14 bg-slate-900 dark:bg-slate-100 rounded-full flex items-center justify-center text-white dark:text-slate-900 shadow-lg shadow-slate-900/20 hover:scale-105 active:scale-95 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus w-7 h-7" aria-hidden="true" data-lucide="plus"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                        </button>
+                    </div>
+
+                    <button class="flex flex-col items-center justify-center w-16 h-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 w-6 h-6" aria-hidden="true" data-lucide="pie-chart"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"></path><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path></svg>
+                        <span class="text-[10px] font-medium">Relatórios</span>
+                    </button>
+                    
+                    <button onclick="logout()" class="flex flex-col items-center justify-center w-16 h-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 w-6 h-6" aria-hidden="true" data-lucide="log-out"><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path></svg>
+                        <span class="text-[10px] font-medium">Sair</span>
+                    </button>
+                </div>
+            </nav>
+
+            <script>
+                function openModal() {
+                    const overlay = document.getElementById('modal-overlay');
+                    const modal = document.getElementById('transaction-modal');
+                    overlay.classList.remove('hidden');
+                    // Slight delay to allow display block to apply before opacity transition
+                    setTimeout(() => {
+                        overlay.classList.remove('opacity-0');
+                        modal.classList.remove('translate-y-full');
+                    }, 10);
+                }
+
+                function closeModal() {
+                    const overlay = document.getElementById('modal-overlay');
+                    const modal = document.getElementById('transaction-modal');
+                    overlay.classList.add('opacity-0');
+                    modal.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                    }, 300); // Matches transition duration
+                }
+            </script>
+        </main>
+    </div>
+
+    <!-- Initialization Script -->
+    <script>
+        // Init Icons
+        function initLucide(){
+            if(window.lucide){
+                lucide.createIcons();
+            } else {
+                setTimeout(initLucide, 200);
+            }
+        }
+        initLucide();
+
+        // Application State logic
+        const currentUser = { name: '', avatar: '' };
+
+        function login(user) {
+            currentUser.name = user;
+            // Set mock avatars
+            if(user === 'Ana') currentUser.avatar = 'https://i.pravatar.cc/150?u=a042581f4e29026024d';
+            else currentUser.avatar = 'https://i.pravatar.cc/150?u=a04258a2462d826712d';
+
+            // Update UI
+            document.getElementById('user-name-mobile').textContent = user;
+            document.getElementById('user-avatar-mobile').src = currentUser.avatar;
+            document.getElementById('user-name-desktop').textContent = user;
+            document.getElementById('user-avatar-desktop').src = currentUser.avatar;
+
+            // Transition
+            const loginScreen = document.getElementById('login-screen');
+            const appContainer = document.getElementById('app-container');
+
+            loginScreen.style.opacity = '0';
+            setTimeout(() => {
+                loginScreen.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                // Trigger re-flow for animation if needed, or just let CSS handle it
+                // Re-init icons for newly visible elements
+                initLucide();
+            }, 500);
+        }
+
+        function logout() {
+            const loginScreen = document.getElementById('login-screen');
+            const appContainer = document.getElementById('app-container');
+
+            loginScreen.classList.remove('hidden');
+            // Small delay to allow display:block to apply before opacity transition
+            setTimeout(() => {
+                loginScreen.style.opacity = '1';
+                appContainer.classList.add('hidden');
+            }, 10);
+            
+            // Reset to dashboard view
+            switchTab('dashboard');
+        }
+
+        function switchTab(tabId) {
+            const dashView = document.getElementById('view-dashboard');
+            const transView = document.getElementById('view-transactions');
+            
+            // Nav Elements
+            const navDashM = document.getElementById('nav-dash-m');
+            const navTransM = document.getElementById('nav-trans-m');
+            const navDashD = document.getElementById('nav-dash-d');
+            const navTransD = document.getElementById('nav-trans-d');
+
+            // Reset Classes
+            const activeClassM = ['text-violet-600', 'dark:text-violet-400'];
+            const inactiveClassM = ['text-slate-400'];
+            
+            const activeClassD = ['bg-violet-50', 'dark:bg-violet-500/10', 'text-violet-600', 'dark:text-violet-400'];
+            const inactiveClassD = ['text-slate-600', 'dark:text-slate-400', 'hover:bg-slate-100', 'dark:hover:bg-slate-800'];
+
+            // Helper to handle class switching
+            const setClasses = (el, active) => {
+                if(el.id.includes('-m')) { // Mobile
+                    if(active) {
+                        el.classList.remove(...inactiveClassM);
+                        el.classList.add(...activeClassM);
+                    } else {
+                        el.classList.remove(...activeClassM);
+                        el.classList.add(...inactiveClassM);
+                    }
+                } else { // Desktop
+                    if(active) {
+                        el.classList.remove(...inactiveClassD);
+                        el.classList.add(...activeClassD);
+                    } else {
+                        el.classList.remove(...activeClassD);
+                        el.classList.add(...inactiveClassD);
+                    }
+                }
+            };
+
+            if (tabId === 'dashboard') {
+                dashView.classList.remove('hidden');
+                transView.classList.add('hidden');
+                
+                setClasses(navDashM, true);
+                setClasses(navTransM, false);
+                setClasses(navDashD, true);
+                setClasses(navTransD, false);
+            } else {
+                dashView.classList.add('hidden');
+                transView.classList.remove('hidden');
+
+                setClasses(navDashM, false);
+                setClasses(navTransM, true);
+                setClasses(navDashD, false);
+                setClasses(navTransD, true);
+            }
+            
+            // Scroll to top
+            document.getElementById('content-scroll').scrollTop = 0;
+            initLucide();
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('transaction-modal');
+        const overlay = document.getElementById('modal-overlay');
+
+        function openModal() {
+            overlay.classList.remove('hidden');
+            // Force reflow
+            void overlay.offsetWidth;
+            overlay.classList.remove('opacity-0');
+            
+            // Slide up
+            modal.classList.remove('translate-y-full');
+            if(window.innerWidth >= 768) {
+                // Desktop specific centering logic is handled by CSS classes, just need to remove the "hidden" state transform
+                // Actually the class controls translate, so removing translate-y-full shows it
+            }
+        }
+
+        function closeModal() {
+            overlay.classList.add('opacity-0');
+            modal.classList.add('translate-y-full');
+            
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300);
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+    </script>
+
+
+
+
+
+
+
+
+<!-- Buildix Badge -->
+<a href="https://buildix.app" target="_blank" rel="noopener noreferrer"
+   style="position:fixed;bottom:16px;right:16px;z-index:9999;display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(24,24,27,0.9);backdrop-filter:blur(4px);border-radius:9999px;font-size:12px;color:#a1a1aa;text-decoration:none;border:1px solid rgba(63,63,70,0.5);font-family:system-ui,-apple-system,sans-serif;transition:color 0.2s;"
+   onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a1a1aa'">
+  <svg width="14" height="14" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bx-deep" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#4a1a88"/>
+      <stop offset="40%" stop-color="#200d50"/>
+      <stop offset="100%" stop-color="#02010a"/>
+    </radialGradient>
+    <radialGradient id="bx-neb1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff33dd" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="#330044" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bx-neb2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#55ffff" stop-opacity="0.7"/>
+      <stop offset="70%" stop-color="#003366" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="bx-clip"><circle cx="256" cy="256" r="200"/></clipPath>
+  </defs>
+  <g>
+    <circle cx="256" cy="256" r="202" fill="none" stroke="#aa88ff" stroke-width="3" opacity="0.5"/>
+    <g clip-path="url(#bx-clip)">
+      <rect width="512" height="512" fill="url(#bx-deep)"/>
+      <circle cx="180" cy="180" r="300" fill="url(#bx-neb1)" opacity="0.7"/>
+      <circle cx="350" cy="350" r="280" fill="url(#bx-neb2)" opacity="0.6"/>
+      <g fill="#fff">
+        <circle cx="200" cy="150" r="2" opacity="0.9"/>
+        <circle cx="100" cy="300" r="1.5" opacity="0.7"/>
+        <circle cx="350" cy="100" r="1.8" opacity="0.8"/>
+        <circle cx="400" cy="300" r="1.2" opacity="0.6"/>
+        <circle cx="256" cy="256" r="2" opacity="0.8"/>
+      </g>
+    </g>
+    <circle cx="256" cy="256" r="200" fill="none" stroke="#6d58a6" stroke-width="1.5" opacity="0.3"/>
+  </g>
+</svg>
+  Made in Buildix
+</a>
+<!-- End Buildix Badge -->
+
+</body></html>
