@@ -47,14 +47,14 @@ export function ShoppingList() {
 
     return (
         <div className="space-y-6 animate-fade-in pb-20 md:pb-0">
-            <div className="bg-violet-600 dark:bg-violet-700 rounded-2xl p-4 sm:p-6 text-white shadow-sm transition-all">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-all">
                 <div className="flex items-center justify-between gap-4">
                     <div className="min-w-0">
-                        <h2 className="text-xl sm:text-2xl font-bold truncate">Lista de Compras</h2>
-                        <p className="text-sm sm:text-base opacity-90">Total Estimado: {formatCurrency(totalEstimated)}</p>
+                        <h2 className="text-xl sm:text-2xl font-bold truncate text-slate-900 dark:text-slate-100">Lista de Compras</h2>
+                        <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium">Total Estimado: {formatCurrency(totalEstimated)}</p>
                     </div>
-                    <div className="p-2.5 sm:p-3 bg-white/10 rounded-xl flex-shrink-0">
-                        <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <div className="p-2.5 sm:p-3 bg-violet-100 dark:bg-violet-900/30 rounded-xl flex-shrink-0">
+                        <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-violet-600 dark:text-violet-400" />
                     </div>
                 </div>
 
@@ -64,7 +64,7 @@ export function ShoppingList() {
                         <input
                             type="text"
                             placeholder="O que vamos comprar?"
-                            className="w-full px-4 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:ring-2 focus:ring-white/30 transition-all font-medium text-lg sm:text-base"
+                            className="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-medium text-lg sm:text-base"
                             value={newItemName}
                             onChange={e => setNewItemName(e.target.value)}
                         />
@@ -75,7 +75,7 @@ export function ShoppingList() {
                                 <button 
                                     type="submit" 
                                     disabled={!newItemName.trim()}
-                                    className="flex-1 sm:flex-none sm:px-8 py-3.5 bg-white text-violet-600 rounded-2xl font-bold hover:bg-violet-50 active:scale-[0.98] transition-all shadow-md disabled:opacity-50 disabled:scale-100 text-base"
+                                    className="flex-1 sm:flex-none sm:px-8 py-3.5 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700 active:scale-[0.98] transition-all shadow-md shadow-violet-500/20 disabled:opacity-50 disabled:scale-100 text-base"
                                 >
                                     Adicionar
                                 </button>
@@ -85,8 +85,10 @@ export function ShoppingList() {
                                 type="button" 
                                 onClick={() => setShowAdvancedAdd(!showAdvancedAdd)}
                                 className={clsx(
-                                    "p-3.5 rounded-2xl border border-white/20 transition-all flex items-center justify-center min-w-[54px] h-[54px]",
-                                    showAdvancedAdd ? "flex-1 sm:flex-none bg-white text-violet-600 shadow-lg" : "bg-white/10 text-white",
+                                    "p-3.5 rounded-2xl border transition-all flex items-center justify-center min-w-[54px] h-[54px]",
+                                    showAdvancedAdd 
+                                        ? "flex-1 sm:flex-none bg-violet-600 border-violet-600 text-white shadow-lg shadow-violet-500/20" 
+                                        : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700",
                                     !showAdvancedAdd && "sm:ml-auto"
                                 )}
                             >
@@ -97,23 +99,23 @@ export function ShoppingList() {
                     </div>
 
                     {showAdvancedAdd && (
-                        <div className="bg-white/5 rounded-2xl p-3 sm:p-5 border border-white/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div className="bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl p-3 sm:p-5 border border-slate-100 dark:border-slate-700 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-white/60 ml-1">Quantidade</label>
-                                    <div className="bg-white/10 rounded-2xl p-1 flex items-center justify-between border border-white/20 h-[54px]">
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 ml-1">Quantidade</label>
+                                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-1 flex items-center justify-between border border-slate-200 dark:border-slate-700 h-[54px]">
                                         <button 
                                             type="button" 
                                             onClick={() => setNewItemQty(Math.max(1, newItemQty - 1))}
-                                            className="w-12 h-12 flex items-center justify-center hover:bg-white/10 active:bg-white/20 rounded-xl transition-colors"
+                                            className="w-12 h-12 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 active:bg-slate-200 dark:active:bg-slate-700 rounded-xl transition-colors"
                                         >
                                             <Minus className="w-6 h-6" />
                                         </button>
-                                        <span className="font-bold text-xl">{newItemQty} <span className="text-sm font-normal opacity-60">un</span></span>
+                                        <span className="font-bold text-xl text-slate-900 dark:text-slate-100">{newItemQty} <span className="text-sm font-normal opacity-60">un</span></span>
                                         <button 
                                             type="button" 
                                             onClick={() => setNewItemQty(newItemQty + 1)}
-                                            className="w-12 h-12 flex items-center justify-center hover:bg-white/10 active:bg-white/20 rounded-xl transition-colors"
+                                            className="w-12 h-12 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 active:bg-slate-200 dark:active:bg-slate-700 rounded-xl transition-colors"
                                         >
                                             <Plus className="w-6 h-6" />
                                         </button>
@@ -121,14 +123,14 @@ export function ShoppingList() {
                                 </div>
                                 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-white/60 ml-1">Preço Estimado (un)</label>
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 ml-1">Preço Estimado (un)</label>
                                     <div className="relative h-[54px]">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-white/60">R$</div>
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">R$</div>
                                         <input
                                             type="text"
                                             inputMode="decimal"
                                             placeholder="0,00"
-                                            className="w-full h-full pl-11 pr-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:ring-2 focus:ring-white/30 transition-all font-bold text-xl"
+                                            className="w-full h-full pl-11 pr-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-bold text-xl"
                                             value={newItemPrice}
                                             onChange={e => setNewItemPrice(sanitizeCurrencyInput(e.target.value))}
                                         />
@@ -140,14 +142,14 @@ export function ShoppingList() {
                                 <button 
                                     type="button"
                                     onClick={() => setShowAdvancedAdd(false)}
-                                    className="flex-1 py-4 bg-white/10 text-white rounded-2xl font-bold hover:bg-white/20 transition-all"
+                                    className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                                 >
                                     Cancelar
                                 </button>
                                 <button 
                                     type="submit" 
                                     disabled={!newItemName.trim()}
-                                    className="flex-[2] py-4 bg-white text-violet-600 rounded-2xl font-bold hover:bg-violet-50 active:scale-[0.98] transition-all shadow-lg disabled:opacity-50 disabled:scale-100"
+                                    className="flex-[2] py-4 bg-violet-600 text-white rounded-2xl font-bold hover:bg-violet-700 active:scale-[0.98] transition-all shadow-lg shadow-violet-500/20 disabled:opacity-50 disabled:scale-100"
                                 >
                                     Confirmar e Adicionar
                                 </button>
