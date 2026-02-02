@@ -58,13 +58,13 @@ export function ShoppingList() {
                     </div>
                 </div>
 
-                <form onSubmit={handleAddItem} className="mt-6 space-y-3">
-                    <div className="flex flex-col sm:flex-row gap-2">
-                        <div className="flex flex-1 gap-2">
+                <form onSubmit={handleAddItem} className="mt-6 space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="relative flex flex-1 gap-2">
                             <input
                                 type="text"
                                 placeholder="O que vamos comprar?"
-                                className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 transition-all font-medium"
+                                className="flex-1 px-4 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:ring-2 focus:ring-white/30 transition-all font-medium text-lg sm:text-base"
                                 value={newItemName}
                                 onChange={e => setNewItemName(e.target.value)}
                             />
@@ -72,53 +72,80 @@ export function ShoppingList() {
                                 type="button" 
                                 onClick={() => setShowAdvancedAdd(!showAdvancedAdd)}
                                 className={clsx(
-                                    "p-3 rounded-xl border border-white/20 transition-all flex-shrink-0",
-                                    showAdvancedAdd ? "bg-white text-violet-600" : "bg-white/10 text-white"
+                                    "p-3.5 rounded-2xl border border-white/20 transition-all flex-shrink-0 flex items-center justify-center min-w-[54px]",
+                                    showAdvancedAdd ? "bg-white text-violet-600 shadow-lg scale-95" : "bg-white/10 text-white"
                                 )}
                             >
-                                <Plus className={clsx("w-5 h-5 transition-transform", showAdvancedAdd && "rotate-45")} />
+                                <Plus className={clsx("w-6 h-6 transition-transform duration-300", showAdvancedAdd && "rotate-45")} />
                             </button>
                         </div>
                         {!showAdvancedAdd && (
-                            <button type="submit" className="w-full sm:w-auto px-4 md:px-6 py-3 sm:py-0 bg-white text-violet-600 rounded-xl font-bold hover:bg-violet-50 transition-colors flex-shrink-0">
+                            <button 
+                                type="submit" 
+                                disabled={!newItemName.trim()}
+                                className="w-full sm:w-auto px-6 py-4 sm:py-0 bg-white text-violet-600 rounded-2xl font-bold hover:bg-violet-50 active:scale-[0.98] transition-all flex-shrink-0 shadow-md disabled:opacity-50 disabled:scale-100"
+                            >
                                 Adicionar
                             </button>
                         )}
                     </div>
 
                     {showAdvancedAdd && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-200">
-                            <div className="bg-white/10 rounded-xl p-1 flex items-center justify-between border border-white/20">
+                        <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-bold text-white/60 ml-1">Quantidade</label>
+                                    <div className="bg-white/10 rounded-2xl p-1 flex items-center justify-between border border-white/20 h-[54px]">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setNewItemQty(Math.max(1, newItemQty - 1))}
+                                            className="w-12 h-12 flex items-center justify-center hover:bg-white/10 active:bg-white/20 rounded-xl transition-colors"
+                                        >
+                                            <Minus className="w-6 h-6" />
+                                        </button>
+                                        <span className="font-bold text-xl">{newItemQty} <span className="text-sm font-normal opacity-60">un</span></span>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setNewItemQty(newItemQty + 1)}
+                                            className="w-12 h-12 flex items-center justify-center hover:bg-white/10 active:bg-white/20 rounded-xl transition-colors"
+                                        >
+                                            <Plus className="w-6 h-6" />
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-bold text-white/60 ml-1">Preço Estimado (un)</label>
+                                    <div className="relative h-[54px]">
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-white/60">R$</div>
+                                        <input
+                                            type="text"
+                                            inputMode="decimal"
+                                            placeholder="0,00"
+                                            className="w-full h-full pl-11 pr-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:ring-2 focus:ring-white/30 transition-all font-bold text-xl"
+                                            value={newItemPrice}
+                                            onChange={e => setNewItemPrice(sanitizeCurrencyInput(e.target.value))}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex gap-2 pt-2">
                                 <button 
-                                    type="button" 
-                                    onClick={() => setNewItemQty(Math.max(1, newItemQty - 1))}
-                                    className="p-3 sm:p-2 hover:bg-white/10 rounded-lg"
+                                    type="button"
+                                    onClick={() => setShowAdvancedAdd(false)}
+                                    className="flex-1 py-4 bg-white/10 text-white rounded-2xl font-bold hover:bg-white/20 transition-all"
                                 >
-                                    <Minus className="w-5 h-5 sm:w-4 sm:h-4" />
+                                    Cancelar
                                 </button>
-                                <span className="font-bold text-lg sm:text-base">{newItemQty} un</span>
                                 <button 
-                                    type="button" 
-                                    onClick={() => setNewItemQty(newItemQty + 1)}
-                                    className="p-3 sm:p-2 hover:bg-white/10 rounded-lg"
+                                    type="submit" 
+                                    disabled={!newItemName.trim()}
+                                    className="flex-[2] py-4 bg-white text-violet-600 rounded-2xl font-bold hover:bg-violet-50 active:scale-[0.98] transition-all shadow-lg disabled:opacity-50 disabled:scale-100"
                                 >
-                                    <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
+                                    Confirmar e Adicionar
                                 </button>
                             </div>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-white/60">R$</div>
-                                <input
-                                    type="text"
-                                    inputMode="decimal"
-                                    placeholder="0,00"
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 transition-all font-bold text-lg sm:text-base"
-                                    value={newItemPrice}
-                                    onChange={e => setNewItemPrice(sanitizeCurrencyInput(e.target.value))}
-                                />
-                            </div>
-                            <button type="submit" className="sm:col-span-2 py-4 sm:py-3 bg-white text-violet-600 rounded-xl font-bold hover:bg-violet-50 transition-colors text-lg sm:text-base">
-                                Adicionar à Lista
-                            </button>
                         </div>
                     )}
                 </form>
@@ -160,19 +187,19 @@ export function ShoppingList() {
                                         <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1">
                                             <div className="flex items-center gap-1">
                                                 {!item.is_checked && (
-                                                    <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg px-1 py-0.5 sm:py-0">
+                                                    <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-1 py-1 sm:py-0.5">
                                                         <button 
                                                             onClick={() => handleUpdateQty(item.id, item.quantity, -1)}
-                                                            className="p-1.5 sm:p-1 text-slate-500 hover:text-violet-600"
+                                                            className="p-2 sm:p-1.5 text-slate-500 hover:text-violet-600 active:scale-90 transition-transform"
                                                         >
-                                                            <Minus className="w-4 h-4 sm:w-3 sm:h-3" />
+                                                            <Minus className="w-5 h-5 sm:w-3.5 sm:h-3.5" />
                                                         </button>
-                                                        <span className="text-xs sm:text-[10px] font-bold px-1.5 sm:px-1 text-slate-700 dark:text-slate-300">{item.quantity}</span>
+                                                        <span className="text-sm sm:text-xs font-bold px-2 sm:px-1.5 text-slate-700 dark:text-slate-300">{item.quantity}</span>
                                                         <button 
                                                             onClick={() => handleUpdateQty(item.id, item.quantity, 1)}
-                                                            className="p-1.5 sm:p-1 text-slate-500 hover:text-violet-600"
+                                                            className="p-2 sm:p-1.5 text-slate-500 hover:text-violet-600 active:scale-90 transition-transform"
                                                         >
-                                                            <Plus className="w-4 h-4 sm:w-3 sm:h-3" />
+                                                            <Plus className="w-5 h-5 sm:w-3.5 sm:h-3.5" />
                                                         </button>
                                                     </div>
                                                 )}
