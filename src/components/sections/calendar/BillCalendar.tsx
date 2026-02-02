@@ -82,24 +82,24 @@ export function BillCalendar() {
 
     return (
         <div className="space-y-6 animate-fade-in pb-20 md:pb-0">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Calendário Financeiro</h2>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button 
                         onClick={() => setIsBillModalOpen(true)}
-                        className="p-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors shadow-sm"
+                        className="p-2.5 bg-violet-600 text-white rounded-xl hover:bg-violet-700 transition-colors shadow-sm flex-shrink-0"
                         title="Nova Conta"
                     >
                         <Plus className="w-5 h-5" />
                     </button>
-                    <div className="flex items-center gap-2 bg-white dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
-                        <button onClick={previousMonth} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded">
+                    <div className="flex-1 sm:flex-none flex items-center justify-between gap-2 bg-white dark:bg-slate-800 rounded-xl p-1 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <button onClick={previousMonth} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
                             <ChevronLeft className="w-5 h-5 text-slate-500" />
                         </button>
-                        <span className="text-sm font-semibold px-2 text-slate-700 dark:text-slate-300 min-w-[140px] text-center capitalize">
+                        <span className="text-sm font-bold px-2 text-slate-700 dark:text-slate-300 min-w-[120px] sm:min-w-[140px] text-center capitalize">
                             {currentMonth}
                         </span>
-                        <button onClick={nextMonth} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded">
+                        <button onClick={nextMonth} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
                             <ChevronRight className="w-5 h-5 text-slate-500" />
                         </button>
                     </div>
