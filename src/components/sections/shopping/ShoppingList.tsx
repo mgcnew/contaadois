@@ -59,27 +59,29 @@ export function ShoppingList() {
                 </div>
 
                 <form onSubmit={handleAddItem} className="mt-6 space-y-3">
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            placeholder="O que vamos comprar?"
-                            className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 transition-all font-medium"
-                            value={newItemName}
-                            onChange={e => setNewItemName(e.target.value)}
-                        />
-                        <button 
-                            type="button" 
-                            onClick={() => setShowAdvancedAdd(!showAdvancedAdd)}
-                            className={clsx(
-                                "p-3 rounded-xl border border-white/20 transition-all flex-shrink-0",
-                                showAdvancedAdd ? "bg-white text-violet-600" : "bg-white/10 text-white"
-                            )}
-                        >
-                            <Plus className={clsx("w-5 h-5 transition-transform", showAdvancedAdd && "rotate-45")} />
-                        </button>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="flex flex-1 gap-2">
+                            <input
+                                type="text"
+                                placeholder="O que vamos comprar?"
+                                className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 transition-all font-medium"
+                                value={newItemName}
+                                onChange={e => setNewItemName(e.target.value)}
+                            />
+                            <button 
+                                type="button" 
+                                onClick={() => setShowAdvancedAdd(!showAdvancedAdd)}
+                                className={clsx(
+                                    "p-3 rounded-xl border border-white/20 transition-all flex-shrink-0",
+                                    showAdvancedAdd ? "bg-white text-violet-600" : "bg-white/10 text-white"
+                                )}
+                            >
+                                <Plus className={clsx("w-5 h-5 transition-transform", showAdvancedAdd && "rotate-45")} />
+                            </button>
+                        </div>
                         {!showAdvancedAdd && (
-                            <button type="submit" className="px-4 md:px-6 bg-white text-violet-600 rounded-xl font-bold hover:bg-violet-50 transition-colors flex-shrink-0">
-                                Add
+                            <button type="submit" className="w-full sm:w-auto px-4 md:px-6 py-3 sm:py-0 bg-white text-violet-600 rounded-xl font-bold hover:bg-violet-50 transition-colors flex-shrink-0">
+                                Adicionar
                             </button>
                         )}
                     </div>
