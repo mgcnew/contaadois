@@ -253,7 +253,7 @@ export function BillCalendar() {
                     <h3 className="font-semibold text-slate-900 dark:text-slate-100">Movimentações do Mês</h3>
                 </div>
 
-                {monthBills.length === 0 && monthExpenses.length === 0 ? (
+                {monthBills.length === 0 && monthTransactions.length === 0 ? (
                     <div className="p-8 text-center text-slate-500 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
                         <p>Nenhuma movimentação para este mês</p>
                     </div>
@@ -313,26 +313,36 @@ export function BillCalendar() {
                             );
                         })}
 
-                        {/* Show Expenses */}
-                        {monthExpenses.map(t => {
+                        {/* Show Transactions (Income and Expense) */}
+                        {monthTransactions.map(t => {
                             const tDate = new Date(t.date);
                             const dayOfMonth = tDate.getDate();
+                            const isIncome = t.type === 'income';
                             
                             return (
                                 <div key={t.id} className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
                                     <div className="flex items-center gap-4">
-                                        <div className="p-3 bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400 rounded-xl flex items-center justify-center">
-                                            <ReceiptText className="w-5 h-5" />
+                                        <div className={clsx(
+                                            "p-3 rounded-xl flex items-center justify-center",
+                                            isIncome ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400"
+                                        )}>
+                                            {isIncome ? <TrendingUp className="w-5 h-5" /> : <ReceiptText className="w-5 h-5" />}
                                         </div>
                                         <div>
                                             <p className="font-bold text-slate-900 dark:text-slate-100">{t.title}</p>
-                                            <p className="text-xs font-medium uppercase text-violet-500">
-                                                Gasto realizado (Dia {dayOfMonth})
+                                            <p className={clsx(
+                                                "text-xs font-medium uppercase",
+                                                isIncome ? "text-emerald-500" : "text-violet-500"
+                                            )}>
+                                                {isIncome ? 'Receita recebida' : 'Gasto realizado'} (Dia {dayOfMonth})
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="font-semibold text-rose-600 dark:text-rose-400" data-value>
-                                        - R$ {Number(t.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    <span className={clsx(
+                                        "font-semibold",
+                                        isIncome ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                                    )} data-value>
+                                        {isIncome ? '+' : '-'} R$ {Number(t.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                     </span>
                                 </div>
                             );
