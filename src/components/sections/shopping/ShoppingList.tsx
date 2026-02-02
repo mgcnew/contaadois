@@ -47,18 +47,18 @@ export function ShoppingList() {
 
     return (
         <div className="space-y-6 animate-fade-in pb-20 md:pb-0">
-            <div className="bg-violet-600 dark:bg-violet-700 rounded-2xl p-6 text-white shadow-sm transition-all">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h2 className="text-2xl font-bold">Lista de Compras</h2>
-                        <p className="opacity-90">Total Estimado: {formatCurrency(totalEstimated)}</p>
+            <div className="bg-violet-600 dark:bg-violet-700 rounded-2xl p-4 sm:p-6 text-white shadow-sm transition-all">
+                <div className="flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                        <h2 className="text-xl sm:text-2xl font-bold truncate">Lista de Compras</h2>
+                        <p className="text-sm sm:text-base opacity-90">Total Estimado: {formatCurrency(totalEstimated)}</p>
                     </div>
-                    <div className="p-3 bg-white/10 rounded-xl">
-                        <ShoppingCart className="w-6 h-6 text-white" />
+                    <div className="p-2.5 sm:p-3 bg-white/10 rounded-xl flex-shrink-0">
+                        <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                 </div>
 
-                <form onSubmit={handleAddItem} className="mt-6 space-y-4">
+                <form onSubmit={handleAddItem} className="mt-4 sm:mt-6 space-y-4">
                     <div className="flex flex-col sm:flex-row gap-3">
                         <div className="relative flex flex-1 gap-2">
                             <input
@@ -91,7 +91,7 @@ export function ShoppingList() {
                     </div>
 
                     {showAdvancedAdd && (
-                        <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div className="bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] uppercase font-bold text-white/60 ml-1">Quantidade</label>
