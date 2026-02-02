@@ -58,40 +58,46 @@ export function ShoppingList() {
                     </div>
                 </div>
 
-                <form onSubmit={handleAddItem} className="mt-4 sm:mt-6 space-y-4">
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <div className="relative flex flex-1 gap-2">
-                            <input
-                                type="text"
-                                placeholder="O que vamos comprar?"
-                                className="flex-1 px-4 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:ring-2 focus:ring-white/30 transition-all font-medium text-lg sm:text-base"
-                                value={newItemName}
-                                onChange={e => setNewItemName(e.target.value)}
-                            />
+                <form onSubmit={handleAddItem} className="mt-4 sm:mt-6 space-y-3">
+                    <div className="flex flex-col gap-3">
+                        {/* Linha 1: Input de texto (Sempre largura total) */}
+                        <input
+                            type="text"
+                            placeholder="O que vamos comprar?"
+                            className="w-full px-4 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:ring-2 focus:ring-white/30 transition-all font-medium text-lg sm:text-base"
+                            value={newItemName}
+                            onChange={e => setNewItemName(e.target.value)}
+                        />
+                        
+                        {/* Linha 2: Botões (Lado a lado no mobile, integrados no desktop) */}
+                        <div className="flex items-center gap-2">
+                            {!showAdvancedAdd && (
+                                <button 
+                                    type="submit" 
+                                    disabled={!newItemName.trim()}
+                                    className="flex-1 sm:flex-none sm:px-8 py-3.5 bg-white text-violet-600 rounded-2xl font-bold hover:bg-violet-50 active:scale-[0.98] transition-all shadow-md disabled:opacity-50 disabled:scale-100 text-base"
+                                >
+                                    Adicionar
+                                </button>
+                            )}
+                            
                             <button 
                                 type="button" 
                                 onClick={() => setShowAdvancedAdd(!showAdvancedAdd)}
                                 className={clsx(
-                                    "p-3.5 rounded-2xl border border-white/20 transition-all flex-shrink-0 flex items-center justify-center min-w-[54px]",
-                                    showAdvancedAdd ? "bg-white text-violet-600 shadow-lg scale-95" : "bg-white/10 text-white"
+                                    "p-3.5 rounded-2xl border border-white/20 transition-all flex items-center justify-center min-w-[54px] h-[54px]",
+                                    showAdvancedAdd ? "flex-1 sm:flex-none bg-white text-violet-600 shadow-lg" : "bg-white/10 text-white",
+                                    !showAdvancedAdd && "sm:ml-auto"
                                 )}
                             >
                                 <Plus className={clsx("w-6 h-6 transition-transform duration-300", showAdvancedAdd && "rotate-45")} />
+                                {showAdvancedAdd && <span className="ml-2 font-bold sm:hidden">Fechar Opções</span>}
                             </button>
                         </div>
-                        {!showAdvancedAdd && (
-                            <button 
-                                type="submit" 
-                                disabled={!newItemName.trim()}
-                                className="w-full sm:w-auto px-6 py-4 sm:py-0 bg-white text-violet-600 rounded-2xl font-bold hover:bg-violet-50 active:scale-[0.98] transition-all flex-shrink-0 shadow-md disabled:opacity-50 disabled:scale-100"
-                            >
-                                Adicionar
-                            </button>
-                        )}
                     </div>
 
                     {showAdvancedAdd && (
-                        <div className="bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div className="bg-white/5 rounded-2xl p-3 sm:p-5 border border-white/10 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] uppercase font-bold text-white/60 ml-1">Quantidade</label>
