@@ -163,8 +163,12 @@ export function BillCalendar() {
                                 {/* Tooltip */}
                                 {isHovered && hasContent && (
                                     <div className={clsx(
-                                        "absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-3 z-30 animate-in fade-in zoom-in duration-200",
-                                        "md:pointer-events-none" // Allow clicks on mobile, prevent flicker on desktop
+                                        "absolute bottom-full mb-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-3 z-30 animate-in fade-in zoom-in duration-200",
+                                        "md:pointer-events-none", // Allow clicks on mobile, prevent flicker on desktop
+                                        // Responsividade do Tooltip: Ajusta a posição horizontal para não cortar
+                                        (day % 7 === 1 || day % 7 === 2) ? "left-0 translate-x-0" : // Começo da semana: alinha à esquerda
+                                        (day % 7 === 0 || day % 7 === 6) ? "right-0 left-auto translate-x-0" : // Fim da semana: alinha à direita
+                                        "left-1/2 -translate-x-1/2" // Meio da semana: centralizado
                                     )}>
                                         <div className="space-y-2">
                                             {dayBills.map(bill => (
@@ -192,7 +196,12 @@ export function BillCalendar() {
                                             )}
                                         </div>
                                         {/* Arrow */}
-                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white dark:border-t-slate-800"></div>
+                                        <div className={clsx(
+                                            "absolute top-full border-8 border-transparent border-t-white dark:border-t-slate-800",
+                                            (day % 7 === 1 || day % 7 === 2) ? "left-4 translate-x-0" :
+                                            (day % 7 === 0 || day % 7 === 6) ? "right-4 left-auto translate-x-0" :
+                                            "left-1/2 -translate-x-1/2"
+                                        )}></div>
                                     </div>
                                 )}
                             </div>
