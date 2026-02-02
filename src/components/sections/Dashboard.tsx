@@ -23,6 +23,22 @@ export function Dashboard({ onSwitchTab }: DashboardProps) {
     const loading = loadingTransactions || loadingBills || loadingGoals || loadingShopping;
 
     const recentTransactions = transactions.slice(0, 3);
+
+    // Cálculo real para o gráfico de balanço
+    const chartData = useMemo(() => {
+        const total = totals.income + totals.expense;
+        if (total === 0) return { incomePercent: 0, expensePercent: 0, strokeDasharray: "0 100" };
+        
+        const incomePercent = Math.round((totals.income / total) * 100);
+        const expensePercent = 100 - incomePercent;
+        
+        // Para um gráfico SVG simples, 2 * PI * r (onde r=15.9155 para perímetro 100)
+        return { 
+            incomePercent, 
+            expensePercent,
+            total
+        };
+    }, [totals]);
     
     // Combined activity feed
     const activities = useMemo(() => {
@@ -152,35 +168,83 @@ export function Dashboard({ onSwitchTab }: DashboardProps) {
                 </div>
             )}
 
-            {/* Chart Card - Compact */}
+            {/* Chart Card - Real Data */}
             <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Balanço Mensal</h3>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative w-20 h-20 flex-shrink-0">
-                        <div className="w-full h-full rounded-full donut-chart"></div>
-                        <div className="absolute inset-0 m-auto w-12 h-12 bg-white dark:bg-slate-900 rounded-full flex flex-col items-center justify-center">
-                            <span className="text-xs font-bold text-slate-900 dark:text-slate-100">65%</span>
+                <div className="flex items-center gap-6">
+                    <div className="relative w-24 h-24 flex-shrink-0">
+                        {/* SVG Donut Chart */}
+                        <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                            {/* Background Circle (Gray) */}
+                            <circle
+                                cx="18"
+                                cy="18"
+                                r="15.9155"
+                                fill="transparent"
+                                stroke="currentColor"
+                                strokeWidth="3.5"
+                                className="text-slate-100 dark:text-slate-800"
+                            />
+                            {/* Income Segment (Emerald) */}
+                            {chartData.total > 0 && (
+                                <circle
+                                    cx="18"
+                                    cy="18"
+                                    r="15.9155"
+                                    fill="transparent"
+                                    stroke="#10b981" // emerald-500
+                                    strokeWidth="3.5"
+                                    strokeDasharray={`${chartData.incomePercent} ${100 - chartData.incomePercent}`}
+                                    strokeLinecap="round"
+                                />
+                            )}
+                            {/* Expense Segment (Rose) - Overlaying background if total > 0 */}
+                            {chartData.total > 0 && chartData.expensePercent > 0 && (
+                                <circle
+                                    cx="18"
+                                    cy="18"
+                                    r="15.9155"
+                                    fill="transparent"
+                                    stroke="#f43f5e" // rose-500
+                                    strokeWidth="3.5"
+                                    strokeDasharray={`${chartData.expensePercent} ${100 - chartData.expensePercent}`}
+                                    strokeDashoffset={-chartData.incomePercent}
+                                    strokeLinecap="round"
+                                />
+                            )}
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                                {chartData.total > 0 ? `${chartData.incomePercent}%` : '0%'}
+                            </span>
+                            <span className="text-[8px] text-slate-400 uppercase font-medium">Entrada</span>
                         </div>
                     </div>
 
-                    <div className="flex-1 space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                <span className="text-slate-600 dark:text-slate-400">Entradas</span>
+                    <div className="flex-1 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Entradas</span>
                             </div>
-                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                            <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
                                 {formatCurrency(totals.income)}
                             </span>
                         </div>
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                                <span className="text-slate-600 dark:text-slate-400">Saídas</span>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Saídas</span>
                             </div>
-                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                            <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
                                 {formatCurrency(totals.expense)}
+                            </span>
+                        </div>
+                        <div className="pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <span className="text-[10px] text-slate-400 font-medium uppercase">Total</span>
+                            <span className="text-xs font-bold text-slate-500">
+                                {formatCurrency(chartData.total)}
                             </span>
                         </div>
                     </div>
